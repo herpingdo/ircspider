@@ -58,7 +58,6 @@ class CrawlThread(threading.Thread):
 						chan = chanlist.pop()
 						cur = chan
 						sock.send("JOIN " + chan + "\r\n")
-						#print chanlist
 						continue
 					if s[1] == "332": #Channel topic
 						line2 = line[1:]
@@ -72,7 +71,6 @@ class CrawlThread(threading.Thread):
 						print curdata
 						w.write("Channel: " + cur)
 						w.write(curdata + "\n")
-						#print "End Data"
 						cur = ""
 						curdata = ""
 						chan = chanlist.pop()
@@ -84,7 +82,6 @@ class CrawlThread(threading.Thread):
 						pass
 						continue
 					if s[1] == "324": #Mode reply
-						#print "GOT MODE"
 						mode = s[4]
 						curdata = curdata + "\n\tMODES: " + mode + " "
 						moderated = self.modes(mode, "m")
@@ -96,7 +93,7 @@ class CrawlThread(threading.Thread):
 							factor = factor + 10
 						if opssett == 0:
 							factor = factor + 25
-						#Implement more factor modifiers.
+						#TODO: Implement more factor modifiers.
 						sock.send("PART " + cur + "\r\n")
 						curdata = "\n\tNetwork: " + self.host + curdata
 						curdata = curdata + "\n\t" + "Trolling Factor: " + str(factor) + " "
@@ -124,12 +121,9 @@ class CrawlThread(threading.Thread):
 						users = line2[1:].split(" ")
 						curdata += "\n\tUSERS: " + usersraw + " "
 						for u in users:
-							pass
 							c = ord(u[0])
 							if c == ord('@') or c == ord('&') or c == ord('~') or c == ord('%'):
 								factor = factor - 5
-								pass
-						pass
 						continue
 					if "You cannot list within the first" in line:
 						sleep(60100)
@@ -137,26 +131,19 @@ class CrawlThread(threading.Thread):
 				except IndexError as ie:
 					pass
 				except (Exception) as e:
-					#print e.args
-					#print e
 					print '-'*60
 					traceback.print_exc(file=sys.stdout)
 					print '-'*60
-					#sys.exit(0)
  				except:
  					print("Exception")
  					print sys.exc_info()[0]
-					pass
-					#raise
-				continue
+				continue #Comment this out for debug printing
 				for c in line:
 					if (ord(c) < 0 or ord(c) > 298):
 						continue
 				print "[" + self.host + "] " + line
-		pass
 
 	def modes(self, s, s2):
-		pass
 		ret = 0
 		try:
 			ret = s.index(s2)
@@ -173,7 +160,6 @@ def crawlIrc(host):
 
 
 def processNetwork(path):
-	#print path
 	nethtml = urlopen(path).read()
 	split = nethtml.split("\n")
 	count = 0;
@@ -188,14 +174,11 @@ def processNetwork(path):
 			doing = 1
 		if doing:
 			count = count + 1
-	pass
-
 #       <td nowrap="nowrap">irc.chaosirc.com&nbsp;&nbsp;</td>
 
 doing = 0
 
 for line in netlist:
-	#print("LINE: " + line)
 	if doing:
 		spl = line.split("href=\"/networks/")
 		for l in spl:
@@ -208,4 +191,3 @@ for line in netlist:
 	else:
 		if ("<th valign=\"top\">" in line):
 			doing = 1
-#print(netlist)
